@@ -8,6 +8,13 @@
 - `today_svg.html` — ブラウザで開いた時点の日付を描くページ（`?date=` `?lang=en` `?tz=` `?theme=dark` `?raw`）
 - `gen_today_svg.mjs` — 生成スクリプト（`node gen_today_svg.mjs [出力先] [--date=YYYY-MM-DD]`）
 
+## ダークテーマ
+
+ダークテーマには自動で対応する。SVG 内の CSS（`@media (prefers-color-scheme: dark)`）で背景と平日の文字色が切り替わる（日曜・祝日の赤、土曜の青はそのまま）。
+
+- 切り替えは OS / ブラウザのダークモード設定に従う
+- 貼り付け先サイト独自のテーマ（例: Cosense のテーマ設定）には連動しない
+
 ## 更新タイミング
 
 GitHub Actions は JST 0:00 に動き始めるため、日付が切り替わるまで少し時間がかかる（数分〜数十分程度）。
