@@ -17,10 +17,9 @@
 
 ## 更新タイミング
 
-GitHub Actions は JST 0:00 に動き始めるため、日付が切り替わるまで少し時間がかかる（数分〜数十分程度）。
+GitHub Actions を JST 23:30 に起動して翌日分を先に生成し、JST 0:00 まで待ってから push する（定時実行は混雑で遅れがちなため）。JST 0:10 にも保険の実行がある。それでも切り替わりは 0:00 ちょうどではなく少し遅れる。
 
-- Actions の定時実行は混雑時に遅れることがある
-- 生成後に GitHub Pages のデプロイが走る
+- push 後に GitHub Pages のデプロイが走る（1分前後）
 - GitHub Pages は `Cache-Control: max-age=600` を返すので、ブラウザや貼り付け先に最大10分ほど前日の画像が残ることがある
 
 祝日は [holidays-jp](https://holidays-jp.github.io/) から取得し、失敗時は祝日法のルールから計算する。
