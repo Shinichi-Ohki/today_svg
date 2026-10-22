@@ -1,12 +1,13 @@
 # today_svg リポジトリの定時生成ワークフロー。
-# 定時実行は遅れがちなので、JST 23:30 に起動して翌日分を先に生成し、JST 0:00 まで待ってから push する。
-# JST 0:10 の実行は保険（その日の画像が既にあれば何もしない）。手動実行はその日の分をすぐ生成する。
+# GitHub の定時実行は遅延・欠落が多いので毎時起動する。
+# JST 19時以降に起動した回は翌日分を先に生成し、JST 0:00 まで待ってから push する（1ジョブ最長6時間に収まる）。
+# それ以外の回はその日の画像が最新か確認し、古ければ更新する（取りこぼしの保険）。
+# 待機中の回がある間、後続の回は concurrency で順番待ちになり、変更なしで終わる。
 name: today-svg
 
 on:
   schedule:
-    - cron: '30 14 * * *'  # JST 23:30
-    - cron: '10 15 * * *'  # JST 0:10
+    - cron: '7 * * * *'  # 毎時7分（毎時0分の混雑を避ける）
   workflow_dispatch:
 
 permissions:
@@ -19,7 +20,7 @@ concurrency:
 jobs:
   generate:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 340
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -27,8 +28,8 @@ jobs:
           node-version: 22
       - name: Generate
         run: |
-          # JST 23時台の起動なら翌日分を作って 0:00 まで待つ。それ以外はその日の分
-          if [ "$(TZ=Asia/Tokyo date +%H)" = 23 ]; then
+          # JST 19時以降の起動なら翌日分を作って 0:00 まで待つ（手動実行は常にその日の分）。それ以外はその日の分
+          if [ "$GITHUB_EVENT_NAME" = schedule ] && [ "$(TZ=Asia/Tokyo date +%-H)" -ge 19 ]; then
             target=$(TZ=Asia/Tokyo date -d tomorrow +%F)
             wait=$(( $(TZ=Asia/Tokyo date -d "$target 00:00:00" +%s) - $(date +%s) ))
           else
