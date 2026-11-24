@@ -4,7 +4,7 @@
 
 ![today](https://shinichi-ohki.github.io/today_svg/today.svg)
 
-- `today.svg` — GitHub Actions が毎日 JST 0:00 に生成してコミットする静的 SVG。`<img>` や Cosense（`[https://shinichi-ohki.github.io/today_svg/today.svg]`）にそのまま貼れる。ダーク対応は SVG 内 CSS の `prefers-color-scheme`
+- `today.svg` — GitHub Actions が日付（JST）が変わったあと最初の毎時実行で生成してコミットする静的 SVG（[更新タイミング](#更新タイミング)）。`<img>` や Cosense（`[https://shinichi-ohki.github.io/today_svg/today.svg]`）にそのまま貼れる。ダーク対応は SVG 内 CSS の `prefers-color-scheme`
 - `today_svg.html` — ブラウザで開いた時点の日付を描くページ（`?date=` `?lang=en` `?tz=` `?theme=dark` `?raw`）
 - `gen_today_svg.mjs` — 生成スクリプト（`node gen_today_svg.mjs [出力先] [--date=YYYY-MM-DD]`）
 
