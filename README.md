@@ -20,6 +20,7 @@
 GitHub Actions を毎時起動し、日付（JST）が変わって最初に起動した回で更新する。GitHub の定時実行は遅延・欠落が多いため、切り替わりは 0:00 ちょうどではなく、たいてい 0〜5時のどこかになる。
 
 - push 後に GitHub Pages のデプロイが走る（1分前後）
+- Pages のデプロイが GitHub 側のエラーで失敗することがある。毎時の実行で公開版とリポジトリを比べ、古ければ Pages の再ビルドを依頼して取り戻す
 - GitHub Pages は `Cache-Control: max-age=600` を返すので、ブラウザや貼り付け先に最大10分ほど前日の画像が残ることがある
 
 祝日は [holidays-jp](https://holidays-jp.github.io/) から取得し、失敗時は祝日法のルールから計算する。

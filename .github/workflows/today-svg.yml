@@ -11,6 +11,7 @@ on:
 
 permissions:
   contents: write
+  pages: write
 
 concurrency:
   group: today-svg
@@ -35,3 +36,18 @@ jobs:
           git commit -m "today.svg: $(TZ=Asia/Tokyo date +%F)"
           git pull --rebase
           git push
+      # Pages のデプロイは GitHub 側の 502 などで失敗することがあり、失敗すると
+      # 次のコミット（翌日）まで公開版が古いまま残る。公開版とリポジトリを比べ、
+      # 違っていれば Pages の再ビルドを依頼する。push 直後の回はデプロイ完了を最大5分待つ。
+      # ここで直らなくても、次の毎時実行で再び確認する。
+      - name: Ensure Pages is up to date
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          url="https://${GITHUB_REPOSITORY_OWNER,,}.github.io/${GITHUB_REPOSITORY#*/}/today.svg"
+          for i in $(seq 1 10); do
+            curl -fsS "$url?t=$(date +%s)" | cmp -s - today.svg && { echo "公開版は最新"; exit 0; }
+            sleep 30
+          done
+          echo "公開版が古いので Pages の再ビルドを依頼する"
+          gh api -X POST "repos/$GITHUB_REPOSITORY/pages/builds"
